@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <math.h>
+#include <wchar.h>
 
 #define LOG_ENABLED
 
@@ -13,9 +14,12 @@
 //static void replazar0A();
 //static void pasarAHexa();
 //static void remove6Mult();
-static void removeMult16();
-static void probarValorHex();
-static void ValorHex(char *hex, int *ent);
+//static void removeMult16();
+//static void probarValorHex();
+//static void ValorHex(char *hex, int *ent);
+//static void String_a_Int(char *bin, int *ent);
+//static void probarStringAInt();
+static void operacionesAritmeticas();
 
 /*
  * 
@@ -24,8 +28,10 @@ int main(int argc, char** argv) {
     //replazar0A();
     //pasarAHexa();
     //remove6Mult();
-    removeMult16();
-    probarValorHex();
+    //removeMult16();
+    //probarValorHex();
+    //probarStringAInt();
+    operacionesAritmeticas();
     return (EXIT_SUCCESS);
 }
 
@@ -153,7 +159,7 @@ void pasarAHexa() {
 /*
  * Escribir un programa ISO C que procese el archivo "nros1byte.dat" sobre si 
  * mismo, eliminando los bytes multiplos de 6.
- */
+ *
 void remove6Mult() {
     FILE *fpRead = fopen("nros1byte.dat", "r");
     FILE *fpWrite = fopen("nros1byte.dat", "r+");
@@ -175,10 +181,10 @@ void remove6Mult() {
     }
 }
 
-/*
+ *
  * Escribir un programa ISO C que procese el archivo "valuesword.dat" sobre sí 
  * mismo, eliminando los words (2 bytes) múltplos de 16.
- */
+ *
 void removeMult16() {
     FILE *fpIn = fopen("valuesword.dat", "r");
     FILE *fpOut = fopen("valuesword.dat", "r+");
@@ -206,14 +212,14 @@ void removeMult16() {
     }
 }
 
-/*
+ *
  * Implemente la función 
  * 
  *      void ValorHex(char *hex, int *ent) 
  * 
  * que interprete la cadena hex (de símbolos hexadecimales) y guarde el valor 
  * correspondiente en el entero indicado por ent.
- */
+ *
 void ValorHex(char *hex, int *ent) {
     int digit;
     int i = 0;
@@ -235,7 +241,7 @@ void ValorHex(char *hex, int *ent) {
             break;
         }
         
-        *ent += digit * pow(16, power);
+ *ent += digit * pow(16, power);
         
         --i;
         ++power;
@@ -247,4 +253,91 @@ void probarValorHex(){
     int ent;
     ValorHex(hex, &ent);
     printf("%d", ent);
+}
+ *
+
+void probarStringAInt() {
+    char bin[32] = "00000000000000000000000011111111";
+    int ent;
+    String_a_Int(bin, &ent);
+    printf("%d", ent);
+}
+
+ * 
+ * Implemente la funcion void String_a_Int(char *bin, int *ent) que interprete 
+ * la cadena bin (de 32 1s/0s) y guarde el valor correspondiente en el entero 
+ * indicado por ent.
+ *
+void String_a_Int(char *bin, int *ent) {
+    int numero = 0;
+    for (int i = 31, j=0; i >= 0; --i, ++j) {
+        if (bin[i] == '1'){
+            numero |= 1 << j;
+        } else if (bin[i] != '0') {
+            puts("invalid number.");
+            numero = 0;
+            break;
+        }
+    }
+    *ent = numero;
+}*/
+
+/*
+ * Escribir un programa que procese un archivo binario de enteros sin signo 
+ * sobre si mismo. El procesamiento consiste en leer pares de enteros de 1 byte 
+ * cada uno y reemplazarlos por 3 enteros (el archivo se agranda): su suma, su 
+ * resta y el OR logico entre ambos.
+ */
+void operacionesAritmeticas(){
+    FILE *fpIn = fopen("unsignedints.dat", "r");
+    FILE *fpOut = fopen("unsignedints.dat", "r+");
+    
+    if (fpIn != NULL && fpOut != NULL){
+        fseek(fpIn, 0L, SEEK_END);
+        int sizeofFileInitial = ftell(fpIn);
+        int sizeofFileFinal;    
+        char c1, c2;
+        char r1, r2, r3;
+
+        if ((sizeofFileInitial % 2) == 0){
+            sizeofFileFinal = sizeofFileInitial * 1.5;
+        } else {
+            sizeofFileFinal = (sizeofFileInitial - 1)*1.5 + 1;
+        }
+
+        ftruncate(fileno(fpOut), sizeofFileFinal);
+        fseek(fpOut, 0L, SEEK_END);
+
+        int pos = sizeofFileInitial;
+
+        if ((sizeofFileInitial % 2) != 0){
+            fseek(fpIn, -1, SEEK_CUR);
+            fseek(fpOut, -1, SEEK_CUR);
+            c1 = fgetc(fpIn);
+            fputc(c1, fpOut);
+            fseek(fpIn, -1, SEEK_CUR);
+            fseek(fpOut, -1, SEEK_CUR);
+            --pos;
+        }
+
+        while (pos > 0){
+            fseek(fpIn, -2, SEEK_CUR);
+            fseek(fpOut, -3, SEEK_CUR);
+            c1 = fgetc(fpIn);
+            c2 = fgetc(fpIn);
+            r1 = c1 + c2;
+            r2 = c1 - c2;
+            r3 = c1 | c2;
+            fputc(r1, fpOut);
+            fputc(r2, fpOut);
+            fputc(r3, fpOut);
+            fseek(fpIn, -2, SEEK_CUR);
+            fseek(fpOut, -3, SEEK_CUR);
+
+            pos -= 2;
+        }
+        
+        fclose(fpIn);
+        fclose(fpOut);
+    }    
 }
