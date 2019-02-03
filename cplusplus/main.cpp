@@ -12,6 +12,8 @@
 #include <set>
 #include <algorithm>
 
+#include "Oracion.h"
+
 using namespace std;
 
 class Box {
@@ -178,6 +180,17 @@ void pruebaUnion(){
     }
 }
 
+void pruebaOracion(){
+    char oraA[10] = "oracion1\0";
+    char oraB[10] = "oracion2\0";
+    
+    Oracion oracionA(oraA);
+    Oracion oracionB(oraB);
+    Oracion oracionC = oracionA - oracionB;
+    
+    std::cout << oracionC.getA() << std::endl;
+}
+
 
 /*
  * 
@@ -188,6 +201,7 @@ int main(int argc, char** argv) {
     pruebaSinSegunda();
     pruebaStatic();
     pruebaUnion();
+    pruebaOracion();
         
     return 0;
 }

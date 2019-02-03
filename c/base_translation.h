@@ -1,10 +1,3 @@
-/* 
- * File:   base_translation.h
- * Author: esteban
- *
- * Created on February 2, 2019, 2:14 PM
- */
-
 #ifndef BASE_TRANSLATION_H
 #define	BASE_TRANSLATION_H
 

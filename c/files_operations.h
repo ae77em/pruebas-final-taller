@@ -1,10 +1,3 @@
-/* 
- * File:   file_operations.h
- * Author: esteban
- *
- * Created on February 2, 2019, 2:09 PM
- */
-
 #ifndef FILE_OPERATIONS_H
 #define	FILE_OPERATIONS_H
 

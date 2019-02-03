@@ -1,6 +1,5 @@
 #include "files_operations.h"
 
-
 /*
  * Escribir un programa ANSI C que procese el archivo "b.bin" sobre sí mismo. El 
  * mismo posee enteros de 16 bits sin signo con valores entre 0 y 255. El 
