@@ -27,8 +27,8 @@ Oracion Oracion::operator -(const Oracion& otra){
         }
     }
     
-    this->a = (char*)str.c_str();
-    
+    strncpy(this->a, str.c_str(), str.length());
+        
     return *this;
 }
 

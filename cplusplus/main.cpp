@@ -57,6 +57,21 @@ std::list<T> Interseccion(std::list<T> a,std::list<T> b){
     return res;
 }
 
+/* 
+ * Escriba una clase template llamada Sumador que reciba por constructor un 
+ * vector de elementos genericos. La clase Sumador debe incluir un metodo 
+ * llamado sumar que acumule los valores del tipo recibido y retorne un nuevo 
+ * objeto del tipo generico.
+ * Que restricciones se le piden al tipo generico en la definicion de Sumador?
+ * 
+template <class T>
+class Sumador {
+public:
+    Sumador(std::vector<T> elems);
+    T sumar(const &T otro);
+};
+ * */
+
 class Base {
 public:
 
@@ -188,7 +203,29 @@ void pruebaOracion(){
     Oracion oracionB(oraB);
     Oracion oracionC = oracionA - oracionB;
     
-    std::cout << oracionC.getA() << std::endl;
+    char *x = oracionC.getA();
+    int i = 0;
+    while (x[i] != '\0'){
+        std::cout << x[i];
+        ++i;
+    }
+}
+
+class ClaseX {
+public:
+    static int mi_variable;
+    ClaseX(){
+        ++mi_variable;
+    }
+};
+
+int ClaseX::mi_variable = 1;
+
+void pruebaClaseX() {
+    ClaseX clase1;
+    std::cout << ClaseX::mi_variable << std::endl;
+    ClaseX clase2;
+    std::cout << ClaseX::mi_variable << std::endl;
 }
 
 
@@ -202,6 +239,7 @@ int main(int argc, char** argv) {
     pruebaStatic();
     pruebaUnion();
     pruebaOracion();
+    pruebaClaseX();
         
     return 0;
 }

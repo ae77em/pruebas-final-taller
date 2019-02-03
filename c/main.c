@@ -7,14 +7,11 @@
 
 #include "base_translation.h"
 #include "files_operations.h"
-
+#include "string_manipulation.h"
 /*
  * 
  */
 int main(int argc, char** argv) {
-    //pasarAHexa();
-    //probarValorHex();
-    //probarStringAInt();
-    operacionesAritmeticas();
+    pruebas_cat();
     return (EXIT_SUCCESS);
 }

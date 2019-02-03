@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include <stdbool.h>
+#include <cstring>
 
 class Oracion {
 public:

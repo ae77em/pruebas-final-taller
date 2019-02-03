@@ -8,7 +8,7 @@ extern "C" {
     
     
 void recibirEImprimir815();
-
+void recibirBinario();
 
 #ifdef	__cplusplus
 }
