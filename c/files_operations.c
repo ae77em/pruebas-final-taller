@@ -88,22 +88,22 @@ void removeMult16() {
     FILE *fpOut = fopen("files/valuesword.dat", "r+");
     char word[3] = {0}; // cantidad de bytes que quiero leer + caracter nulo
     int number;
-    
+
     if (fpIn != NULL) {
         while (!feof(fpIn)) {
             // cantidad de bytes que quiero leer + caracter nulo
-            if (fgets(word, 3, fpIn) != NULL){
+            if (fgets(word, 3, fpIn) != NULL) {
                 number = word[1] | word[0] << 8;
 
                 puts(word);
                 printf("%d\n", number);
 
                 if ((number % 16) != 0) {
-                    fputs(word, fpOut);                    
+                    fputs(word, fpOut);
                 }
             }
         }
-        
+
         ftruncate(fileno(fpOut), ftell(fpOut));
         fclose(fpOut);
         fclose(fpIn);
@@ -180,18 +180,18 @@ void pasarAHexa() {
  * cada uno y reemplazarlos por 3 enteros (el archivo se agranda): su suma, su 
  * resta y el OR logico entre ambos.
  */
-void operacionesAritmeticas(){
+void operacionesAritmeticas() {
     FILE *fpIn = fopen("unsignedints.dat", "r");
     FILE *fpOut = fopen("unsignedints.dat", "r+");
-    
-    if (fpIn != NULL && fpOut != NULL){
+
+    if (fpIn != NULL && fpOut != NULL) {
         fseek(fpIn, 0L, SEEK_END);
         int sizeofFileInitial = ftell(fpIn);
-        int sizeofFileFinal;    
+        int sizeofFileFinal;
         char c1, c2;
         char r1, r2, r3;
 
-        if ((sizeofFileInitial % 2) == 0){
+        if ((sizeofFileInitial % 2) == 0) {
             sizeofFileFinal = sizeofFileInitial * 1.5;
         } else {
             sizeofFileFinal = (sizeofFileInitial - 1)*1.5 + 1;
@@ -202,7 +202,7 @@ void operacionesAritmeticas(){
 
         int pos = sizeofFileInitial;
 
-        if ((sizeofFileInitial % 2) != 0){
+        if ((sizeofFileInitial % 2) != 0) {
             fseek(fpIn, -1, SEEK_CUR);
             fseek(fpOut, -1, SEEK_CUR);
             c1 = fgetc(fpIn);
@@ -212,7 +212,7 @@ void operacionesAritmeticas(){
             --pos;
         }
 
-        while (pos > 0){
+        while (pos > 0) {
             fseek(fpIn, -2, SEEK_CUR);
             fseek(fpOut, -3, SEEK_CUR);
             c1 = fgetc(fpIn);
@@ -228,9 +228,52 @@ void operacionesAritmeticas(){
 
             pos -= 2;
         }
-        
+
         fclose(fpIn);
         fclose(fpOut);
-    }    
+    }
 }
 
+/*
+ * Escriba una rutina que procese un archivo binario indicado por parametro 
+ * sobre si mismo sumarizando los listados de numeros que posee almacenado. 
+ * La sumarizacion consiste en recorrer los valores enteros de 32 bits con signo
+ * grabados en formato big-endian y acumular sus valores hasta encontrar el 
+ * valor 0xffffffff que se considera un separador entre listados.
+ * Todos los valores enteros detectados son reemplazados por su sumatoria (en el
+ * mismo formati) manteniendo luego el elemento separador. Considere archivos 
+ * bien formados.
+ */
+void sumarizarListados(const char *fileName) {
+    FILE* fpIn = fopen(fileName, "r");
+    FILE* fpOut = fopen(fileName, "r+");
+    int32_t number;
+    int32_t sum = 0;
+
+    if (fpIn != NULL) {
+        if (fpOut != NULL) {
+            while (fread((void*)&number, sizeof(int32_t), 1, fpIn) > 0) {
+                number = ntohl(number);
+                if (number == -1 /* == 0xffffffff */){
+                    sum = htonl(sum);
+                    number = htonl(number);
+                    fwrite((void*)&sum, sizeof(int32_t), 1, fpOut);
+                    fwrite((void*)&number, sizeof(int32_t), 1, fpOut);
+                    sum = 0;
+                } else {
+                    sum += number;                    
+                }
+            }
+            
+            fclose(fpIn);
+            ftruncate(fileno(fpOut), ftell(fpOut));            
+            fclose(fpOut);
+        }
+
+        fclose(fpIn);
+    }
+}
+
+void pruebasSumarizado(){
+    sumarizarListados("files/listadoNumeros.dat");
+}

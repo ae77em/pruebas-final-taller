@@ -14,13 +14,15 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <netinet/in.h>
     
     void replazar0A();
     void remove6Mult();
     void removeMult16();
     void pasarAHexa();
     void operacionesAritmeticas();
+    void sumarizarListados(const char *fileName);
+    void pruebasSumarizado();
 
 
 #ifdef	__cplusplus

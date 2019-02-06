@@ -65,34 +65,37 @@ void recibirEImprimir815(){
  */
 void recibirBinario(){
     // create socket
-    /*int client_server = socket(AF_INET, SOCK_STREAM, 0);
+    int client_socket = socket(AF_INET, SOCK_STREAM, 0);
     
-    // bind 
-    struct sockaddr_in addr;
+    // conect
+    struct sockaddr_in their_addr;
     
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(8192);
-    
-    
-    bind(socket_server, (struct sockaddr*)&addr, (socklen_t)sizeof(struct sockaddr));
-    
-    // listen
-    listen(socket_server, 1);
-    
-    // accept
-    int socket_client = accept(socket_server, NULL, NULL);
-    
-    // receive
-    char chunk[50] = {0};
-        
-    FILE *fpRecibido = fopen("recibido.bin", "w");
-    if (fpRecibido != NULL){
-        while (recv(socket_client, &chunk[0], 50, MSG_NOSIGNAL) > 0){
-            fputs(chunk, fpRecibido);
+    their_addr.sin_family = AF_INET; // orden de bytes de la máquina
+    their_addr.sin_port = htons(8192); // short, orden de bytes de la red
+    their_addr.sin_addr.s_addr = inet_addr("8.8.8.8");
+    memset(&(their_addr.sin_zero), 8, sizeof (int)); // poner a 0 el resto
+
+    int conn_status = connect(client_socket, (struct sockaddr *) &their_addr, sizeof (struct sockaddr));
+
+    if (conn_status == -1) {
+        puts("conection error");
+        return;
+    } else {
+        // receive
+        char chunk[50] = {0};
+
+        FILE *fpRecibido = fopen("recibido.bin", "w");
+        if (fpRecibido != NULL){
+            while (recv(client_socket, &chunk[0], 50, MSG_NOSIGNAL) > 0){
+                fputs(chunk, fpRecibido);
+            }
+
+            fclose(fpRecibido);
+        } else {
+            puts("file error.");
         }
-        
-        fclose(fpRecibido);
-    }*/
+    }
     
     // shutdown
+    shutdown(client_socket, SHUT_RD);
 }

@@ -12,6 +12,6 @@
  * 
  */
 int main(int argc, char** argv) {
-    pruebas_cat();
+    pruebasSumarizado();
     return (EXIT_SUCCESS);
 }

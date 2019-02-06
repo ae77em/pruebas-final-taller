@@ -11,8 +11,13 @@
 #include <list>
 #include <set>
 #include <algorithm>
+#include <thread>         // std::thread
+#include <mutex>          // std::mutex
 
 #include "Oracion.h"
+
+std::mutex mtx; // mutex for critical section
+int counter;
 
 using namespace std;
 
@@ -47,7 +52,7 @@ std::list<T> SinSegunda(std::list<T> a, std::list<T> b) {
  * std::list<T> Interseccion(std::list<T> a,std::list<T> b)
  */
 template <class T>
-std::list<T> Interseccion(std::list<T> a,std::list<T> b){
+std::list<T> Interseccion(std::list<T> a, std::list<T> b) {
     std::list<T> res;
     a.sort();
     b.sort();
@@ -183,29 +188,29 @@ void pruebaStatic() {
     cout << "box1 objects count after box2 creation: " << box1.getObjectsCount() << endl;
 }
 
-void pruebaUnion(){
-    int auxa[] = {1,2,3};
-    int auxb[] = {2,3,4};
-    std::list<int> a(auxa, auxa + sizeof(auxa)/sizeof(int));
-    std::list<int> b(auxb, auxb + sizeof(auxb)/sizeof(int));
+void pruebaUnion() {
+    int auxa[] = {1, 2, 3};
+    int auxb[] = {2, 3, 4};
+    std::list<int> a(auxa, auxa + sizeof (auxa) / sizeof (int));
+    std::list<int> b(auxb, auxb + sizeof (auxb) / sizeof (int));
     std::list<int> res = Interseccion<int>(a, b);
-    
-    for (auto const &r : res){
+
+    for (auto const &r : res) {
         std::cout << r << std::endl;
     }
 }
 
-void pruebaOracion(){
+void pruebaOracion() {
     char oraA[10] = "oracion1\0";
     char oraB[10] = "oracion2\0";
-    
+
     Oracion oracionA(oraA);
     Oracion oracionB(oraB);
     Oracion oracionC = oracionA - oracionB;
-    
+
     char *x = oracionC.getA();
     int i = 0;
-    while (x[i] != '\0'){
+    while (x[i] != '\0') {
         std::cout << x[i];
         ++i;
     }
@@ -214,7 +219,8 @@ void pruebaOracion(){
 class ClaseX {
 public:
     static int mi_variable;
-    ClaseX(){
+
+    ClaseX() {
         ++mi_variable;
     }
 };
@@ -228,10 +234,35 @@ void pruebaClaseX() {
     std::cout << ClaseX::mi_variable << std::endl;
 }
 
+void imprimirNumeros(bool esPar){
+    int nroAnterior = 0;
+    bool termino = false;
+    while (!termino){
+        mtx.lock();
+        if ((esPar and counter % 2 == 0) or (!esPar and counter % 2 != 0)){
+            if (counter<=10){
+                if (counter != nroAnterior){
+                    std::cout << counter << std::endl;
+                    nroAnterior = counter;
+                    ++counter;
+                }
+            } else {
+                termino = true;
+            }
+        }
+        mtx.unlock();
+    } 
+}
 
-/*
- * 
- */
+void pruebaContarThread() {
+    counter = 1;
+    std::thread th1(imprimirNumeros, true);
+    std::thread th2(imprimirNumeros, false);
+
+    th1.join();
+    th2.join();
+}
+
 int main(int argc, char** argv) {
     pruebaBaseDerivada();
     pruebaAB();
@@ -240,7 +271,8 @@ int main(int argc, char** argv) {
     pruebaUnion();
     pruebaOracion();
     pruebaClaseX();
-        
+    pruebaContarThread();
+
     return 0;
 }
 
