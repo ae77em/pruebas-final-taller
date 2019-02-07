@@ -12,6 +12,10 @@
  * 
  */
 int main(int argc, char** argv) {
-    pruebasSumarizado();
+    char* agrandado = agrandar2("Chau", 1, 2, 3);
+    if (agrandado != NULL){
+        printf("%s", agrandado);
+        free(agrandado);
+    }
     return (EXIT_SUCCESS);
 }

@@ -55,3 +55,67 @@ void pruebas_cat() {
     }
 }
 
+
+/*
+ * Escriba una funcion C llamada Agrandar que reciba por parametro 1 cadena (S),
+ * dos indices (I1, I2) y una cantidad (Q). La funcion debe retornar una copia 
+ * de S salvo los caracteres entre los indices I1 y I2 que seran duplicados Q 
+ * veces en la misma posicion.
+ * Ej: Agrandar("Chau", 1, 2, 3) retorna "Chahahau".
+ *                                        Chahahahau
+ */
+char* agrandar(const char *s, int i1, int i2, int q){
+    if (i1>i2){
+        return NULL;
+    }
+    int s_size = strlen(s);
+    int r_size = (s_size+(i2-i1+1)*(q));
+    char *toReturn = malloc(sizeof(char)*r_size);
+    
+    int i=0;
+    while (i<=i2){
+        toReturn[i] = s[i];
+        ++i;
+    }
+    int j, k=i;
+    while (q-1>0) {
+        j = i1;
+        while (j<=i2){
+            toReturn[k] = s[j];
+            ++j;
+            ++k;
+        }
+        --q;
+    }
+    
+    while (i<r_size){
+        toReturn[k] = s[i];
+        ++i;
+        ++k;
+    }
+    return toReturn;
+}   
+
+char* agrandar2(const char *s, int i1, int i2, int q){
+    if (i1>i2){
+        return NULL;
+    }
+    int s_size = strlen(s);
+    
+    int r_size = (s_size+(i2-i1+1)*(q));
+    int shift1 = sizeof(char)*i1;
+    int shift2 = sizeof(char)*(i2+1);
+    
+    char *toReturn = malloc(sizeof(char)*r_size);
+    
+    strncpy(toReturn, s, i1);
+    while (q>0){
+        strncat(toReturn, s+shift1, i2-i1+1);
+        --q;
+    }
+    strncat(toReturn,s+shift2, r_size-i2+1);
+    
+    return toReturn;
+}   
+
+
