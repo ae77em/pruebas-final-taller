@@ -12,10 +12,6 @@
  * 
  */
 int main(int argc, char** argv) {
-    char* agrandado = agrandar2("Chau", 1, 2, 3);
-    if (agrandado != NULL){
-        printf("%s", agrandado);
-        free(agrandado);
-    }
+    multiplosDe5mas1();
     return (EXIT_SUCCESS);
 }

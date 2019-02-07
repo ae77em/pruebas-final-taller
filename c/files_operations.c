@@ -252,21 +252,21 @@ void sumarizarListados(const char *fileName) {
 
     if (fpIn != NULL) {
         if (fpOut != NULL) {
-            while (fread((void*)&number, sizeof(int32_t), 1, fpIn) > 0) {
+            while (fread((void*) &number, sizeof (int32_t), 1, fpIn) > 0) {
                 number = ntohl(number);
-                if (number == -1 /* == 0xffffffff */){
+                if (number == -1 /* == 0xffffffff */) {
                     sum = htonl(sum);
                     number = htonl(number);
-                    fwrite((void*)&sum, sizeof(int32_t), 1, fpOut);
-                    fwrite((void*)&number, sizeof(int32_t), 1, fpOut);
+                    fwrite((void*) &sum, sizeof (int32_t), 1, fpOut);
+                    fwrite((void*) &number, sizeof (int32_t), 1, fpOut);
                     sum = 0;
                 } else {
-                    sum += number;                    
+                    sum += number;
                 }
             }
-            
+
             fclose(fpIn);
-            ftruncate(fileno(fpOut), ftell(fpOut));            
+            ftruncate(fileno(fpOut), ftell(fpOut));
             fclose(fpOut);
         }
 
@@ -274,6 +274,57 @@ void sumarizarListados(const char *fileName) {
     }
 }
 
-void pruebasSumarizado(){
+void pruebasSumarizado() {
     sumarizarListados("files/listadoNumeros.dat");
+}
+
+/*
+ * Escriba un programa C que reciba por argumento el nombre de un archivo de 
+ * numeros binarios de 16 bits y lo procese sobre si mismo.
+ * El procesamiento consiste en repetir los numeros que sean 
+ * "multiplos de 5 + 1" (6, 11, 16...) (El archivo se agranda)
+ */
+void multiplosDe5mas1() {
+    FILE *fpIn = fopen("files/multiplos5mas1.bin", "r");
+    FILE *fpOut = fopen("files/multiplos5mas1.bin", "r+");
+    uint16_t value;
+    int cont = 0;
+    
+    if (fpIn != NULL) {
+        
+        while(fread((void*)&value, sizeof(uint16_t), 1, fpIn)>0){
+            if ((value - 1) % 5 == 0){
+                ++cont;
+            }
+        }
+        
+        if (fpOut != NULL) {
+            fseek(fpIn, 0L, SEEK_END);
+            int initSize = ftell(fpIn);
+            
+            ftruncate(fileno(fpOut), initSize+(cont*sizeof(uint16_t)));
+            fseek(fpOut, 0L, SEEK_END);
+            ftell(fpOut);
+            
+            int auxCont = initSize / sizeof(uint16_t);
+            
+            do {
+                fseek(fpIn, -sizeof(uint16_t), SEEK_CUR);
+                fread((void*)&value, sizeof(uint16_t), 1, fpIn);
+                fseek(fpIn, -sizeof(uint16_t), SEEK_CUR);
+                
+                fseek(fpOut, -sizeof(uint16_t), SEEK_CUR);
+                if ((value-1)%5==0){
+                    fseek(fpOut, -sizeof(uint16_t), SEEK_CUR);
+                    fwrite((void*)&value,sizeof(uint16_t), 1, fpOut);
+                }
+                fwrite((void*)&value,sizeof(uint16_t), 1, fpOut);
+                --auxCont;
+            } while (auxCont>0);
+            
+            fclose(fpOut);
+        }
+
+        fclose(fpIn);
+    }
 }

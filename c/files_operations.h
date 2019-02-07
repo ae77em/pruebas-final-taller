@@ -23,6 +23,7 @@ extern "C" {
     void operacionesAritmeticas();
     void sumarizarListados(const char *fileName);
     void pruebasSumarizado();
+    void multiplosDe5mas1();
  
 
 

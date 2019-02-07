@@ -20,6 +20,7 @@ char* strncat_new(const char* s1, const char* s2, unsigned long l);
 void pruebas_cat();
 char* agrandar(const char *s, int i1, int i2, int q);  
 char* agrandar2(const char *s, int i1, int i2, int q);  
+void pruebaAgrandar();
 
 #ifdef	__cplusplus
 }
