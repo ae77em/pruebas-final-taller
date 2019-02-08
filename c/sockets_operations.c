@@ -99,3 +99,54 @@ void recibirBinario(){
     // shutdown
     shutdown(client_socket, SHUT_RD);
 }
+
+/*
+ * Defina un rutina en C que se conecte a la IP 10.9.8.7, puerto 7777 y procese 
+ * la informacion recibida. El proceso consiste en recibir textos numericos 
+ * utilizando ``'\n'`` como caracter delimitador. Para cada entero recibido se 
+ * debe enviar su valor convertido en 32 bits big-endian en modo binario sin 
+ * delimitadores. El proceso finaliza al recibir el valor 0. 
+ */
+void convertirTextoANumero(){
+    /* 
+     * Los pasos para establecer un socket del lado del cliente son:
+     * 1. Crear un socket con la función socket()
+     * 2. Enlazar el socket a la dirección del servidor utilizando connect()
+     * 3. Enviar y recibir datos con send() y recv()
+     * 4. Cerrar todos los sockets debidamente con close() al finalizar.
+     */
+    // crear socket
+    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    
+    // bind
+    struct sockaddr_in my_addr;
+    
+    memset((char*)&my_addr, 0, sizeof(my_addr));
+    my_addr.sin_family = AF_INET;
+    my_addr.sin_port = htons(7777);
+    my_addr.sin_addr.s_addr = inet_addr("10.9.8.7");
+    
+    connect(server_socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr));
+
+    // listen
+    int ended = 0;
+    char digit[1];
+    char *numberText = NULL;
+    uint32_t number;
+    while (!ended){
+        recv(server_socket, (void*)&digit[0], 1, MSG_NOSIGNAL);
+        if (&digit[0] == 0){
+            ended = 1;
+            number = (uint32_t)atoi(numberText);
+            send(server_socket, (void*)&number, sizeof(uint32_t), MSG_NOSIGNAL);
+        } else if (strncmp((char*)&digit, (char*)'\n', 1)){
+            number = (uint32_t)atoi(numberText);
+            send(server_socket, (void*)&number, sizeof(uint32_t), MSG_NOSIGNAL);
+            memset((void*)numberText, 0, sizeof(numberText));
+        } else {
+            strncat(numberText, (char*)&digit, 1);            
+        }        
+    }
+    
+    shutdown(server_socket, SHUT_RDWR)    ;
+}

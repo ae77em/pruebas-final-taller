@@ -4,11 +4,10 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-    
-    
-    
+
 void recibirEImprimir815();
 void recibirBinario();
+void convertirTextoANumero();
 
 #ifdef	__cplusplus
 }
