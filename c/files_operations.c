@@ -289,42 +289,122 @@ void multiplosDe5mas1() {
     FILE *fpOut = fopen("files/multiplos5mas1.bin", "r+");
     uint16_t value;
     int cont = 0;
-    
+
     if (fpIn != NULL) {
-        
-        while(fread((void*)&value, sizeof(uint16_t), 1, fpIn)>0){
-            if ((value - 1) % 5 == 0){
+
+        while (fread((void*) &value, sizeof (uint16_t), 1, fpIn) > 0) {
+            if ((value - 1) % 5 == 0) {
                 ++cont;
             }
         }
-        
+
         if (fpOut != NULL) {
             fseek(fpIn, 0L, SEEK_END);
             int initSize = ftell(fpIn);
-            
-            ftruncate(fileno(fpOut), initSize+(cont*sizeof(uint16_t)));
+
+            ftruncate(fileno(fpOut), initSize + (cont * sizeof (uint16_t)));
             fseek(fpOut, 0L, SEEK_END);
             ftell(fpOut);
-            
-            int auxCont = initSize / sizeof(uint16_t);
-            
+
+            int auxCont = initSize / sizeof (uint16_t);
+
             do {
-                fseek(fpIn, -sizeof(uint16_t), SEEK_CUR);
-                fread((void*)&value, sizeof(uint16_t), 1, fpIn);
-                fseek(fpIn, -sizeof(uint16_t), SEEK_CUR);
-                
-                fseek(fpOut, -sizeof(uint16_t), SEEK_CUR);
-                if ((value-1)%5==0){
-                    fseek(fpOut, -sizeof(uint16_t), SEEK_CUR);
-                    fwrite((void*)&value,sizeof(uint16_t), 1, fpOut);
+                fseek(fpIn, -sizeof (uint16_t), SEEK_CUR);
+                fread((void*) &value, sizeof (uint16_t), 1, fpIn);
+                fseek(fpIn, -sizeof (uint16_t), SEEK_CUR);
+
+                fseek(fpOut, -sizeof (uint16_t), SEEK_CUR);
+                if ((value - 1) % 5 == 0) {
+                    fseek(fpOut, -sizeof (uint16_t), SEEK_CUR);
+                    fwrite((void*) &value, sizeof (uint16_t), 1, fpOut);
                 }
-                fwrite((void*)&value,sizeof(uint16_t), 1, fpOut);
+                fwrite((void*) &value, sizeof (uint16_t), 1, fpOut);
                 --auxCont;
-            } while (auxCont>0);
-            
+            } while (auxCont > 0);
+
             fclose(fpOut);
         }
 
         fclose(fpIn);
     }
+}
+
+/*
+ * Escribir un programa ISO C que, sin crear archivos intermedios, altere el 
+ * archivo "data.bin" reemplazando todas las secuencias de 3 bytes 
+ * 0x34 0x43 0x44 por la secuencia de 2 bytes 0x34 0x43. Cabe destacar que el 
+ * programa debe reprocesar el reemplazo efectuado. 
+ * (Ejemplo: 0x34 0x43 0x44 0x44 ---> 0x34 0x43 0x44 ---> 0x34 0x43).
+ */
+void procesarReprocesar() {
+    FILE* fpI = fopen("files/data.bin", "r");
+    FILE* fpO = fopen("files/data.bin", "r+");
+
+    char c1, c2;
+
+    while ((c1 = fgetc(fpI)) != EOF) {
+        fputc(c1, fpO);
+        printf("%d\n", c1);
+
+        if (c1 == 52) {//0x34
+            c2 = fgetc(fpI);
+            fputc(c2, fpO);
+            
+            if (c2 == 67) {//0x43
+                while (fgetc(fpI) == 68);
+            }
+        }
+    }
+
+    fclose(fpI);
+
+    ftruncate(fileno(fpO), ftell(fpO));
+    fclose(fpO);
+}
+
+/*
+ * Escribir un programa ISO C que procese el archivo palabras.txt sobre sí 
+ * mismo. El proceso consiste en duplicar las palabras que tengan más de 2 
+ * consonantes.
+ */
+
+char consonantes[] = "BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz";
+
+int contarConsonantes(char *p) {
+    int i = 0;
+    int c = 0;
+    while (p[i] != 0 && c < 3){
+        if (strchr(consonantes,p[i]) != NULL){
+            ++c;
+        }
+        ++i;
+    }
+    return c;
+}
+
+void procesar2Consonantes() {
+    FILE *fpI = fopen("files/palabras.txt", "r");
+    FILE *fpO = fopen("files/palabras.txt", "r+");
+    fseek(fpO, 0L, SEEK_END);
+    
+    char l;
+    char p[1024] = {0};
+    int i = 0;
+    
+    while ((l = fgetc(fpI)) != EOF){
+        if (l != ' ') {
+            p[i] = l;
+            ++i;
+        } else {
+            if (contarConsonantes(p)>2){
+                fputc(' ', fpO);
+                fputs(&p[0], fpO);                                
+            }
+            memset((void*)&p[0], 0, sizeof(char)*1024);
+            i = 0;
+        }
+    }
+    
+    fclose(fpI);
+    fclose(fpO);
 }

@@ -12,6 +12,6 @@
  * 
  */
 int main(int argc, char** argv) {
-    multiplosDe5mas1();
+    procesar2Consonantes();
     return (EXIT_SUCCESS);
 }

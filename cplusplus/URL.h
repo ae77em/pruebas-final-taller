@@ -27,8 +27,8 @@ public:
      * ``<<``, operator``==`` y operator``=``.
      * */
 
-    friend std::ostream& operator<<(std::ostream &os, const URL& url) {
-        return os << url.protocol << "://" << url.host << ":" << url.port;
+    std::ostream& operator<<(std::ostream &os) const {
+        return os << protocol << "://" << host << ":" << port;
     };
 
     bool operator==(const URL& other) const {

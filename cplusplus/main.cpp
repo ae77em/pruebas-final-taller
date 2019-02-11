@@ -11,6 +11,7 @@
 #include <list>
 #include <set>
 #include <algorithm>
+#include <string>
 #include <thread>         // std::thread
 #include <mutex>          // std::mutex
 
@@ -202,18 +203,13 @@ void pruebaUnion() {
 
 void pruebaOracion() {
     char oraA[10] = "oracion1\0";
-    char oraB[10] = "oracion2\0";
+    char oraB[10] = "oracion\0";
 
     Oracion oracionA(oraA);
     Oracion oracionB(oraB);
     Oracion oracionC = oracionA - oracionB;
 
-    char *x = oracionC.getA();
-    int i = 0;
-    while (x[i] != '\0') {
-        std::cout << x[i];
-        ++i;
-    }
+    std::cout << std::string(oracionC.getA());    
 }
 
 class ClaseX {
@@ -263,16 +259,49 @@ void pruebaContarThread() {
     th2.join();
 }
 
-int main(int argc, char** argv) {
-    pruebaBaseDerivada();
-    pruebaAB();
-    pruebaSinSegunda();
-    pruebaStatic();
-    pruebaUnion();
-    pruebaOracion();
-    pruebaClaseX();
-    pruebaContarThread();
+class MonitoredValue {
+    public:
+        MonitoredValue() { value = 0; };
+        ~MonitoredValue();
 
+        int inc(){
+            m.lock();
+            ++value;
+            m.unlock();
+            return value;
+        };
+
+    private:
+        int value;
+        std::mutex m;
+};
+
+void aumentarMonitoredValue(MonitoredValue &v1, std::string& thread){
+    for (int i = 0; i < 5; ++i){
+        std::cout << thread << v1.inc() << std::endl;        
+    }
+}
+
+void pruebaThreads(){
+    //MonitoredValue v1;
+   // std::thread thr1(aumentarMonitoredValue, v1, "1");
+    //std::thread thr2(aumentarMonitoredValue, v1, "2");
+    
+    //thr1.join();
+    //thr2.join();
+}
+
+int main(int argc, char** argv) {
+    //pruebaBaseDerivada();
+    pruebaAB();
+    //pruebaSinSegunda();
+    //pruebaStatic();
+    //pruebaUnion();
+    //pruebaOracion();
+    //pruebaClaseX();
+    //pruebaContarThread();
+    //pruebaThreads();
+    
     return 0;
 }
 

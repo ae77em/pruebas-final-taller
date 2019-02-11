@@ -24,6 +24,8 @@ extern "C" {
     void sumarizarListados(const char *fileName);
     void pruebasSumarizado();
     void multiplosDe5mas1();
+    void procesarReprocesar();
+    void procesar2Consonantes();
  
 
 
