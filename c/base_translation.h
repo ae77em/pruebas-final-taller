@@ -16,6 +16,7 @@ extern "C" {
     void probarValorHex();
     void probarStringAInt();
     void String_a_Int(char *bin, int *ent);
+    void decimalAOctal();
 
 
 #ifdef	__cplusplus

@@ -69,4 +69,28 @@ void String_a_Int(char *bin, int *ent) {
     *ent = numero;
 }
 
+void decimalAOctal(){
+    char decStr[] = "1234";
+    char octStr[255] = {0};
+    
+    int d = atoi(decStr);
+    int r = 0;
+    int i = 0;
+    
+    while (d!=0){
+        r = d % 8;
+        d = d / 8;
+        octStr[i] = r + 48;
+        ++i;
+    }
+    
+    puts("decimal");
+    printf("%s", decStr);
+    puts("\noctal");
+    while (i>=0) {
+        --i;
+        printf("%c", octStr[i]);
+    }
+}
+
 

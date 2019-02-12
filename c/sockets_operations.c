@@ -208,10 +208,11 @@ void procesarPaquetes600bytes() {
     int acep = socket(AF_INET, SOCK_STREAM, 0);
     
     // bind and listen
-    struct sockaddr_in addr_acep;    
-    
+    struct sockaddr_in addr_acep;
+    struct hostent *he = gethostbyname("localhost");
+        
     memset((void*)&addr_acep, 0, sizeof(struct sockaddr));
-    addr_acep.sin_addr.s_addr = INADDR_ANY;
+    addr_acep.sin_addr = *((struct in_addr)he->h_addr_list[0]);
     addr_acep.sin_port = htons(1972);
     addr_acep.sin_family = AF_INET;
     

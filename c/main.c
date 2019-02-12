@@ -12,6 +12,6 @@
  * 
  */
 int main(int argc, char** argv) {
-    procesar2Consonantes();
+    decimalAOctal();
     return (EXIT_SUCCESS);
 }

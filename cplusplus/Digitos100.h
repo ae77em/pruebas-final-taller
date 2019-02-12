@@ -18,18 +18,24 @@
 class Digitos100 {
 public:
     Digitos100();
-    //Digitos100(const std::array<int>& otro);
-   // Digitos100::Digitos100(const Digitos100& orig);
+    Digitos100(const std::array<int, 100>& otro);
+    Digitos100(const Digitos100& orig);
     virtual ~Digitos100();
-/*
-    operator ==(const std::array<int>& otro);
+
+    bool operator ==(const Digitos100& otro);
     Digitos100& operator =(const Digitos100& otro);
-    //Digitos100& int(const Digitos100& otro);
-    std::ostream& operator <<(std::ostream& os, const Digitos100& digitos);
+    operator int();
+    std::ostream& operator <<(std::ostream& os) const {
+        for (auto it = digitos.begin(); it != digitos.end(); ++it){
+            os << *it;
+        }
+        
+        return os;
+    };
     bool operator <(const Digitos100& otro);
     
-    std::array<int, 100> getDigitos();
-  */  
+    std::array<int, 100> getDigitos() const;
+  
 private:    
     std::array<int, 100> digitos;
 };
